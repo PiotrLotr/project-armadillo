@@ -1,0 +1,11 @@
+FROM mongo:latest
+
+ENV MONGO_INITDB_ROOT_USERNAME=user
+ENV MONGO_INITDB_ROOT_PASSWORD=password
+ENV MONGO_INITDB_DATABASE=videos
+
+COPY ./bigbuck.mp4 /data/db/bigbuck.mp4
+
+VOLUME /data/db
+
+EXPOSE 27017

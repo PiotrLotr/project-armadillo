@@ -1,0 +1,32 @@
+name: Docker Image CI db
+
+on:
+  push:
+    branches: [ "production" ]
+  pull_request:
+    branches: [ "production" ]
+    
+  workflow_dispatch:  
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build the Docker image
+      working-directory: app/db
+      run: docker build . --tag armadillo-db:latest
+      
+    - name: Push to AWS ECR
+      uses: hands-lab/push-ecr-action@v1.1
+      with:
+        image: armadillo-db:latest
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-central-1
+        aws-account-id: 251865263936
+      

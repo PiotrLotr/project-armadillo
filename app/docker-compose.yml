@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  app:
+    build:
+      context: ./app/.
+    container_name: "app"
+    ports:
+      - "80":"80"
+    depends_on:
+      - db
+
+  db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    container_name: db
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=videos
+
+volumes:
+  mongo-data:
