@@ -75,6 +75,6 @@ app.get("/mongo-video", function (req, res) {
   });
 });
 
-app.listen(8000, function () {
-  console.log("Listening on port 8000!");
+app.listen(80, function () {
+  console.log("Listening on port 80!");
 });
