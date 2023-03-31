@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const fs = require("fs");
 const mongodb = require('mongodb');
-const url = 'db-service.local://user:password@db:27017';
+const url = 'mongodb://127.0.0.1:27017';
 
 app.get("/", function (req, res) {
   res.sendFile(__dirname + "/index.html");
