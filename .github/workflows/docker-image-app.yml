@@ -20,10 +20,10 @@ jobs:
     - name: Build the Docker image
       working-directory: app/app 
       run: docker build \n
-      	     --build-arg ${{ MONGO_INITDB_ROOT_USERNAME }} \n
-             --build-arg ${{ MONGO_INITDB_ROOT_PASSWORD }} \n
-             --build-arg ${{ MONGO_INITDB_DATABASE }} \n
-             --tag armadillo-app:latest .
+        --build-arg ${{ MONGO_INITDB_ROOT_USERNAME }} \n
+        --build-arg ${{ MONGO_INITDB_ROOT_PASSWORD }} \n
+        --build-arg ${{ MONGO_INITDB_DATABASE }} \n
+        --tag armadillo-app:latest .
       
       
     - name: Push to AWS ECR
