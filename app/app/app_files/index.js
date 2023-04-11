@@ -2,7 +2,12 @@ const express = require("express");
 const app = express();
 const fs = require("fs");
 const mongodb = require('mongodb');
-const url = 'mongodb://127.0.0.1:27017';
+
+const MONGO_INITDB_ROOT_USERNAME = process.env.MONGO_INITDB_ROOT_USERNAME;
+const MONGO_INITDB_ROOT_PASSWORD = process.env.MONGO_INITDB_ROOT_PASSWORD;
+const MONGO_INITDB_DATABASE = process.env.MONGO_INITDB_DATABASE;
+
+const url = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db-service.local:27017`
 
 app.get("/", function (req, res) {
   res.sendFile(__dirname + "/index.html");
@@ -12,14 +17,13 @@ app.get("/healthcheck", function (req, res) {
   res.status(200).send("Healthy...");
 });
 
-// Sorry about this monstrosity
 app.get('/init-video', function (req, res) {
-  mongodb.MongoClient.connect(url, function (error, client) {
+  mongodb.MongoClient.connect(url, { useUnifiedTopology: true }, function (error, client) {
     if (error) {
       res.json(error);
       return;
     }
-    const db = client.db('videos');
+    const db = client.db(MONGO_INITDB_DATABASE);
     const bucket = new mongodb.GridFSBucket(db);
     const videoUploadStream = bucket.openUploadStream('bigbuck');
     const videoReadStream = fs.createReadStream('./bigbuck.mp4');
@@ -40,7 +44,7 @@ app.get("/mongo-video", function (req, res) {
       res.status(400).send("Requires Range header");
     }
 
-    const db = client.db('videos');
+    const db = client.db(MONGO_INITDB_DATABASE);
     // GridFS Collection
     db.collection('fs.files').findOne({}, (err, video) => {
       if (!video) {
