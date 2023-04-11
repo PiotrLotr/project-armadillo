@@ -19,7 +19,12 @@ jobs:
     
     - name: Build the Docker image
       working-directory: app/app 
-      run: docker build . --tag armadillo-app:latest
+      run: docker build \
+      	     --build-arg ${{ MONGO_INITDB_ROOT_USERNAME }} \
+             --build-arg ${{ MONGO_INITDB_ROOT_PASSWORD }} \
+             --build-arg ${{ MONGO_INITDB_DATABASE }} \
+             --tag armadillo-app:latest .
+      
       
     - name: Push to AWS ECR
       uses: hands-lab/push-ecr-action@v1.1
@@ -29,4 +34,3 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-central-1
         aws-account-id: 251865263936
-      
