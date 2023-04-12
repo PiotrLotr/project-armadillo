@@ -5,7 +5,7 @@ const mongodb = require('mongodb');
 
 const MONGO_INITDB_ROOT_USERNAME = process.env.MONGO_INITDB_ROOT_USERNAME;
 const MONGO_INITDB_ROOT_PASSWORD = process.env.MONGO_INITDB_ROOT_PASSWORD;
-const MONGO_INITDB_DATABASE = process.env.MONGO_INITDB_DATABASE;
+const MONGO_INITDB_DATABASE = 'videos';
 
 const url = `mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@db-service.local:27017`
 
