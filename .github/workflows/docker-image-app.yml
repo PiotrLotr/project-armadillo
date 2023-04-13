@@ -1,26 +1,20 @@
 name: Docker Image CI application
 
 on:
-  push:
-    branches: [ "production" ]
-  pull_request:
-    branches: [ "production" ]
-    
+  workflow_run:
+    workflows: ["Sonarqube scan"]
+    types:
+      - completed 
   workflow_dispatch:  
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
-    
     - name: Build the Docker image
       working-directory: app/app 
       run: docker build --build-arg ${{ secrets.MONGO_INITDB_ROOT_USERNAME }} --build-arg ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} --build-arg ${{ vars.MONGO_INITDB_DATABASE }} --tag armadillo-app:latest .
-      
     - name: Push to AWS ECR
       uses: hands-lab/push-ecr-action@v1.1
       with:
