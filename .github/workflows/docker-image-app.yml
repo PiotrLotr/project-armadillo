@@ -15,7 +15,7 @@ permissions:
   security-events: write  
 
 jobs:
-  build:
+  build_and_scan:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -23,16 +23,7 @@ jobs:
     - name: Build the Docker image
       working-directory: app/app 
       run: docker build --build-arg ${{ secrets.MONGO_INITDB_ROOT_USERNAME }} --build-arg ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} --build-arg ${{ vars.MONGO_INITDB_DATABASE }} --tag armadillo-app:latest .
-    
-    - name: Push to AWS ECR
-      uses: hands-lab/push-ecr-action@v1.1
-      with:
-        image: armadillo-app:latest
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-central-1
-        aws-account-id: 251865263936
-    
+      
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
       with:
@@ -45,5 +36,16 @@ jobs:
     - name: Upload Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v2
       with:
-        sarif_file: 'trivy-results.sarif'        
+        sarif_file: 'trivy-results.sarif'      
+    
+    - name: Push to AWS ECR
+      uses: hands-lab/push-ecr-action@v1.1
+      with:
+        image: armadillo-app:latest
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-central-1
+        aws-account-id: 251865263936
+    
+        
         

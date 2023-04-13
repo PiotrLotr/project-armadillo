@@ -1,17 +1,21 @@
 name: Docker Image CI db
 
 on:
-  push:
-    branches: [ "production" ]
-  pull_request:
-    branches: [ "production" ]
-    
+  workflow_run:
+    workflows: ["Sonarqube scan"]
+    types:
+      - completed 
+    branches:
+      - release
   workflow_dispatch:  
+  
+permissions:
+  actions: read
+  contents: read
+  security-events: write  
 
 jobs:
-
-  build:
-
+  build_and_scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +24,20 @@ jobs:
     - name: Build the Docker image
       working-directory: app/db
       run: docker build --build-arg ${{ secrets.MONGO_INITDB_ROOT_USERNAME }} --build-arg ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} --build-arg ${{ vars.MONGO_INITDB_DATABASE }} --tag armadillo-db:latest .
+          
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
+      with:
+        image-ref: 'armadillo-db:latest'
+        format: 'template'
+        template: '@/contrib/sarif.tpl'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'      
       
     - name: Push to AWS ECR
       uses: hands-lab/push-ecr-action@v1.1
