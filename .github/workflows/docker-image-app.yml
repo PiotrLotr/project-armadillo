@@ -5,6 +5,8 @@ on:
     workflows: ["Sonarqube scan"]
     types:
       - completed 
+    branches:
+      - release
   workflow_dispatch:  
 
 jobs:
